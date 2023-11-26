@@ -61,7 +61,7 @@ const CategoryScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.middleContainer}>
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" />
         ) : (
           <>
             {listas.length > 0 ? (
@@ -70,33 +70,35 @@ const CategoryScreen = ({ navigation }) => {
                   <Button
                     title={lista.name}
                     onPress={() => navigation.navigate('Lista', { category: lista.name })}
-                    containerStyle={[styles.buttonContainer, styles.tealButton]}
-                    color="#008080"
+                    containerStyle={styles.buttonContainer}
+                    buttonStyle={styles.buttonStyle}
                   />
                   <Button
                     title='x'
+                    buttonStyle={{
+                      width: '25%',
+                      height: 70,
+                      opacity: 0.7,
+                    }}
                     onPress={() => handleRemoverLista(lista.id)}
-                    containerStyle={[styles.buttonContainer, styles.tealButton]}
-                    color="#008080"
+                    containerStyle={styles.buttonContainer}
                   />
                 </View>
               ))
             ) : (
               <View>
-                <Text style={styles.noListText}>Nenhuma lista encontrada.</Text>
+                <Text style={styles.noListText}>Nenhuma área encontrada.</Text>
               </View>
             )}
           </>
         )}
       </View>
-      <View style={styles.bottomContainer}>
-        <Button
-          title="Adicionar área"
-          onPress={handleAdicionarLista}
-          color="#008080"
-          containerStyle={[styles.buttonContainer, styles.tealButton]}
-        />
-      </View>
+      <Button
+        title="Adicionar área"
+        onPress={handleAdicionarLista}
+        type="outline"
+        containerStyle={styles.buttonAdd}
+      />
       <CustomInputDialogModal
         visible={dialogVisible}
         onClose={handleDialogClose}
@@ -109,8 +111,7 @@ const CategoryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 10,
   },
   topRightContainer: {
     position: 'absolute',
@@ -122,21 +123,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 10,
-  },
   buttonContainer: {
-    marginRight: 10,
+    marginRight: '0.5%',
     marginBottom: 20,
+    width: '100%',
   },
-  tealButton: {
-    backgroundColor: 'teal',
+  buttonStyle: {
+    height: 70,
+  },
+  buttonAdd: {
+    width: '100%',
   },
   listItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    alignSelf: 'flex-start',
+    width: '80%',
   },
   noListText: {
     marginBottom: 20,

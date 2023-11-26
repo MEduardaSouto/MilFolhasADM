@@ -28,7 +28,7 @@ export default function TodoListScreen({ route }) {
             {`R$ ${task.value}`}
           </Text>
         </ListItem.Content>
-        <Button title="Excluir" onPress={() => deleteTask(index, task.id)} color="#008080" />
+        <Button title="Excluir" onPress={() => deleteTask(index, task.id)} />
       </ListItem>
     );
   };
@@ -115,9 +115,9 @@ export default function TodoListScreen({ route }) {
       />
       <Button
         title="Adicionar"
+        disabled={!Boolean(task && itemValue)}
         onPress={addTaskAndSave}
         containerStyle={styles.button}
-        color="#008080"
       />
       <View style={styles.listContainer}>
         {tasks.map((task, index) => renderTask(task, index))}
@@ -133,13 +133,16 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 20,
+    marginLeft: 10
   },
   inputContainer: {
     marginBottom: 20,
+    padding: 0
   },
   button: {
     marginBottom: 20,
-    color:"#008080",
+    marginLeft: 10,
+    marginRight: 10
   },
   listContainer: {
     flex: 1,

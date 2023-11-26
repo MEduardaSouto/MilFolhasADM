@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { Input, Button } from '@rneui/base';
-import axios from 'axios';
 import { fetchUser } from '../actions/listActions';
 
 const LoginScreen = ({ navigation }) => {
@@ -9,22 +8,20 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const instance = axios.create({
-    baseURL: 'https://todo-app-wx01.onrender.com',
-  });
-
   const handleLogin = async () => {
     try {
       const response = await fetchUser(username, password);
+      console.log(response)
 
-      if (response.name) {
+      if (response) {
         navigation.navigate('Seu Totem');
-      } else {
-        setError('Usuário ou senha inválidos');
+        setUsername('');
+        setPassword('');
+        setError('')
       }
     } catch (error) {
       console.error(error);
-      setError('Ocorreu um erro ao fazer login');
+      setError('Seu login ou senha estão incorretos');
     }
   };
 
@@ -34,22 +31,27 @@ const LoginScreen = ({ navigation }) => {
         style={styles.input}
         placeholder="Nome de usuário"
         value={username}
-        onChangeText={text => setUsername(text)}
+        onChangeText={(text) => setUsername(text)}
+        onFocus={() => setError('')}
       />
       <Input
         style={styles.input}
         placeholder="Senha"
         secureTextEntry
         value={password}
-        onChangeText={text => setPassword(text)}
+        onChangeText={(text) => setPassword(text)}
+        onFocus={() => setError('')}
       />
       <Button
-        style={styles.button}
+        title="Login"
+        disabled={!Boolean(username && password)}
         onPress={handleLogin}
-        color="#008080"
-      >
-        Login
-      </Button>
+        containerStyle={styles.button}
+      />
+      <Button
+        title="Cadastro"
+        containerStyle={styles.button}
+      />
       {error !== '' && <Text style={styles.error}>{error}</Text>}
     </View>
   );
@@ -61,25 +63,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '##00b3b3',
   },
   input: {
-    width: '100%',
     marginBottom: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
   },
   button: {
+    padding: 10,
     width: '100%',
-    maxWidth: 300,
-    alignSelf: 'center',
-    marginTop: 10,
-    backgroundColor: '#00b3b3',
   },
   error: {
     color: 'red',
     marginTop: 10,
+    textAlign: 'center'
   },
 });
 
