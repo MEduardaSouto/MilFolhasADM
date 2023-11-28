@@ -2,8 +2,8 @@ import axios from 'axios';
 import uuid from 'react-native-uuid';
 
 const instance = axios.create({
-  baseURL: 'https://milfolhasserver.onrender.com',
-  // baseURL: 'http://192.168.43.1:3000'
+  // baseURL: 'https://milfolhasserver.onrender.com',
+  baseURL: 'http://192.168.0.7:3000'
 });
 
 let userId = '';
@@ -102,9 +102,22 @@ export const registerUser = async (name, password) => {
 };
 
 export const addNewItem = async (listId, newItem) => {
-  const { id, name, value } = newItem
+  const { id, name, value, image } = newItem;
+
+  // Criar um objeto FormData
+  const formData = new FormData();
+  formData.append('id', id);
+  formData.append('name', name);
+  formData.append('value', value);
+  formData.append('image', image);
+
   try {
-    const response = await instance.post(`/user/${userId}/list/${listId}/item`, { id, name, value });
+    const response = await instance.post(`/user/${userId}/list/${listId}/item`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
     userId = response.data.id;
     return response.data;
   } catch (error) {

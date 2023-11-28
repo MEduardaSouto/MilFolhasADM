@@ -3,7 +3,7 @@ import { StyleSheet, View, Image } from 'react-native';
 import { Button, Input, ListItem, Text, CheckBox } from '@rneui/base';
 import { v4 as uuidv4 } from 'uuid';
 import { addNewItem, fetchListIdByName, fetchItemsByListId, deleteItemById, updateItemById } from '../actions/listActions';
-import ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function TodoListScreen({ route }) {
   const { category } = route.params;
@@ -48,13 +48,13 @@ export default function TodoListScreen({ route }) {
         id: uuidv4(),
         name: task,
         value: itemValue,
-        image: image, // Adicionando o URI da imagem ao objeto do item
+        image: image,
       };
       await addNewItem(listId, newItem)
       setTasks([...tasks, newItem]);
       setTask('');
       setItemValue('');
-      setImage(null); // Limpar a imagem após adicioná-la
+      setImage(null); 
     } catch (error) {
       console.error(error);
     }
@@ -82,12 +82,19 @@ export default function TodoListScreen({ route }) {
     setTasks(updatedTasks);
   };
 
-  const chooseImage = () => {
-    ImagePicker.showImagePicker({}, response => {
-      if (response.uri) {
-        setImage(response.uri);
-      }
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   useEffect(() => {
@@ -126,8 +133,8 @@ export default function TodoListScreen({ route }) {
         onChangeText={(value) => setItemValue(value)}
         containerStyle={styles.inputContainer}
       />
-      <Button title="Escolher Imagem" onPress={chooseImage} />
-        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      <Button title="Escolher Imagem" onPress={pickImage} containerStyle={styles.button}/>
+        {image && <Image source={{ uri: image }} style={{ width: 100, height: 100, margin: 10, marginLeft: 0 }} />}
       <Button
         title="Adicionar"
         disabled={!Boolean(task && itemValue)}
