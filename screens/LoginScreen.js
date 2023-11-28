@@ -50,6 +50,7 @@ const LoginScreen = ({ navigation }) => {
       />
       <Button
         title="Cadastro"
+        onPress={() => { navigation.navigate('Cadastro') }}
         containerStyle={styles.button}
       />
       {error !== '' && <Text style={styles.error}>{error}</Text>}

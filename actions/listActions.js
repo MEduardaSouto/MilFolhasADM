@@ -2,8 +2,8 @@ import axios from 'axios';
 import uuid from 'react-native-uuid';
 
 const instance = axios.create({
-  // baseURL: 'https://milfolhasserver.onrender.com',
-  baseURL: 'http://192.168.0.7:3000'
+  baseURL: 'https://milfolhasserver.onrender.com',
+  // baseURL: 'http://192.168.43.1:3000'
 });
 
 let userId = '';
@@ -83,6 +83,17 @@ export const fetchUser = async (username, password) => {
   try {
     const response = await instance.post('/user/login', { username, password });
     userId = response.data.id;
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const registerUser = async (name, password) => {
+  try {
+    const id = uuid.v4();
+    const response = await instance.post(`/user`, {id, name, password });
     return response.data;
   } catch (error) {
     console.error(error);
