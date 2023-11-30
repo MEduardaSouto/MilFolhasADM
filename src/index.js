@@ -1,39 +1,11 @@
+// Filename - index.js
+
 import React from 'react';
-
-import ReactDOM from 'react-dom/client'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-
-import CategoryScreen from './screens/CategoryScreen';
-import TodoListScreen from './screens/TodoListScreen';
-import LoginScreen from './screens/LoginScreen'; 
-import SignUpScreen from './screens/SignUpScreen';
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LoginScreen />,
-    children: [
-      {
-        path: "/SignUpScreen",
-        element: <SignUpScreen />,
-      },
-      {
-        path: "/CategoryScreen",
-        element: <CategoryScreen />,
-      },
-      {
-        path: "/TodoListScreen",
-        element: <TodoListScreen />,
-      },
-    ]
-  },
-]);
+import ReactDOM from 'react-dom';
+import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <App />
   </React.StrictMode>
-)
+);

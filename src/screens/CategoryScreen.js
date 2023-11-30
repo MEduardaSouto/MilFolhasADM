@@ -63,7 +63,7 @@ const CategoryScreen = () => {
   };
 
   const handleListaClick = (listaName) => {
-    navigate(`TodoListScreen`);
+    navigate(`/TodoListScreen/${listaName}`);
   };
 
   return (

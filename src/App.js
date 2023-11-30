@@ -1,54 +1,44 @@
-// import React from 'react';
+import React from "react";
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+} from "react-router-dom";
 
-// import ReactDOM from 'react-dom/client'
-// import {
-//   createBrowserRouter,
-//   RouterProvider,
-//   Route,
-// } from "react-router-dom";
+import LoginScreen from './screens/LoginScreen'; // Importe o componente principal da sua aplicação
+import CategoryScreen from './screens/CategoryScreen';
+import TodoListScreen from './screens/TodoListScreen';
+import SignUpScreen from './screens/SignUpScreen';
 
+function App() {
+	return (
+		<>
+			<BrowserRouter>
+				<Routes>
+					<Route
+						exact
+						path="/"
+						element={<LoginScreen />}
+					/>
+					<Route
+						exact
+						path="/SignUpScreen"
+						element={<SignUpScreen />}
+					/>
+					<Route
+						exact
+						path="/CategoryScreen"
+						element={<CategoryScreen />}
+					/>
+					<Route
+						exact
+						path="TodoListScreen/:category"
+						element={<TodoListScreen />}
+					/>
+				</Routes>
+			</BrowserRouter>
+		</>
+	);
+}
 
-// import CategoryScreen from './screens/CategoryScreen';
-// import TodoListScreen from './screens/TodoListScreen';
-// import LoginScreen from './screens/LoginScreen'; 
-// import SignUpScreen from './screens/SignUpScreen';
-
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: <LoginScreen />,
-//     children: [
-//       {
-//         path: "/SignUpScreen",
-//         element: <SignUpScreen />,
-//       },
-//       {
-//         path: "/CategoryScreen",
-//         element: <CategoryScreen />,
-//       },
-//       {
-//         path: "/TodoListScreen",
-//         element: <TodoListScreen />,
-//       },
-//     ]
-//   },
-// ]);
-
-// ReactDOM.createRoot(document.getElementById('root')).render(
-//   <React.StrictMode>
-//     <RouterProvider router={router} />
-//   </React.StrictMode>
-// )
-
-// // export default function App() {
-// //   return (
-// //     <Router>
-// //       {/* <Switch> */}
-// //         <Route path="/login" component={LoginScreen} />
-// //         <Route path="/seu-totem" component={CategoryScreen} />
-// //         <Route path="/lista" component={TodoListScreen} />
-// //         <Route path="/cadastro" component={SignUpScreen} />
-// //       {/* </Switch> */}
-// //     </Router>
-// //   );
-// // }
+export default App;

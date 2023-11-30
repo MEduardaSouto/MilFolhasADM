@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 
 // import FileInput from 'react-file-input';
 
@@ -10,11 +11,9 @@ import Checkbox from '@mui/material/Checkbox';
 // import { Add as AddIcon, Delete as DeleteIcon } from '@material-ui/icons';
 
 import { addNewItem, fetchListIdByName, fetchItemsByListId, deleteItemById, updateItemById } from '../actions/listActions';
-// import ImagePicker from 'react-image-picker';
-// import 'react-image-picker/dist/index.css';
 
-const TodoListScreen = ({ route }) => {
-  const { category } = route.params;
+const TodoListScreen = () => {
+  const { category } = useParams();
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState('');
   const [itemValue, setItemValue] = useState('');
@@ -81,12 +80,23 @@ const TodoListScreen = ({ route }) => {
     setTasks(updatedTasks);
   };
 
-  const handleImagePick = (image) => {
-    setImage(image);
+  const handleImagePick = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const base64Image = e.target.result;
+      console.log(base64Image, 'image')
+      setImage(base64Image);
+    };
+
+    reader.readAsDataURL(file);
   };
+  
+  const inputRef = useRef(null)
 
   const pickImage = () => {
-    // Abre o seletor de imagens
+    inputRef.current.click()
   };
 
   useEffect(() => {
@@ -128,6 +138,14 @@ const TodoListScreen = ({ route }) => {
       <Button onClick={pickImage} style={styles.button}>
         Escolher Imagem
       </Button>
+      <div>
+        <input 
+          type='file'
+          ref={inputRef}
+          onChange={handleImagePick}
+          style={{display: 'none'}}
+        />
+      </div>
       {image && <img src={image} alt="Selected" style={styles.selectedImage} />}
       <Button
         disabled={!Boolean(task && itemValue)}
@@ -139,10 +157,6 @@ const TodoListScreen = ({ route }) => {
       <div style={styles.listContainer}>
         {tasks.map((task, index) => renderTask(task, index))}
       </div>
-      {/* <FileInput
-        value=""
-        onChange={(event) => console.log(event.target.files)}
-      /> */}
     </div>
   );
 };
