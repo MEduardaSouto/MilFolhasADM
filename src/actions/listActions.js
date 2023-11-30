@@ -6,9 +6,34 @@ const instance = axios.create({
   // baseURL: 'http://192.168.0.7:3000'
 });
 
-let userId = '';
+export const getUserId = () => localStorage.getItem('userId');
 
-export const getUserId = () => userId;
+// USER //////////////
+
+export const fetchUser = async (username, password) => {
+  try {
+    const response = await instance.post('/user/login', { username, password });
+    localStorage.setItem('userId', response.data.id);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const registerUser = async (name, password) => {
+  try {
+    const id = uuidv4();
+    const response = await instance.post(`/user`, {id, name, password });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
+// LISTAS //////////////
 
 export const fetchListas = async () => {
   try {
@@ -44,7 +69,6 @@ export const fetchListIdByName = async (name) => {
   try {
     const response = await instance.get(`/user/${getUserId()}/lists`);
     const lists = response.data;
-    console.log('aquiii', lists)
     const list = lists.find((list) => list.name === name);
     return list ? list.id : null;
   } catch (error) {
@@ -52,6 +76,10 @@ export const fetchListIdByName = async (name) => {
     return null;
   }
 };
+
+
+
+// ITEM //////////////
 
 export const fetchItemsByListId = async (listId) => {
   try {
@@ -82,28 +110,6 @@ export const updateItemById = async (listId, itemId, isChecked) => {
   }
 };
 
-export const fetchUser = async (username, password) => {
-  try {
-    const response = await instance.post('/user/login', { username, password });
-    userId = response.data.id;
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const registerUser = async (name, password) => {
-  try {
-    const id = uuidv4();
-    const response = await instance.post(`/user`, {id, name, password });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
 export const addNewItem = async (listId, newItem) => {
   const id = uuidv4();
   const { name, value, image } = newItem;
@@ -120,7 +126,7 @@ export const addNewItem = async (listId, newItem) => {
         'Content-Type': 'multipart/form-data',
       },
     });
-    userId = response.data.id;
+
     return response.data;
   } catch (error) {
     console.error(error);

@@ -1,16 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-
-// import FileInput from 'react-file-input';
-
 import Button from '@mui/material/Button';
-import Input from '@mui/material/Input';
+import TextField from '@mui/material/TextField';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
-import Checkbox from '@mui/material/Checkbox';
-// import { Add as AddIcon, Delete as DeleteIcon } from '@material-ui/icons';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon  from '@mui/icons-material/Delete';
 
-import { addNewItem, fetchListIdByName, fetchItemsByListId, deleteItemById, updateItemById } from '../actions/listActions';
+import { styled } from '@mui/material/styles';
+
+import {
+  addNewItem,
+  fetchListIdByName,
+  fetchItemsByListId,
+  deleteItemById,
+} from '../actions/listActions';
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const TodoListScreen = () => {
   const { category } = useParams();
@@ -19,30 +35,33 @@ const TodoListScreen = () => {
   const [itemValue, setItemValue] = useState('');
   const [image, setImage] = useState(null);
 
-  const renderTask = (task, index) => (
-    <ListItem key={index} divider>
-      <Checkbox
-        checked={task.is_checked}
-        onChange={() => toggleTask(index, task.id, task.is_checked)}
-      />
-      <div>
-        <Typography style={task.is_checked ? styles.completedTask : null}>
-          {task.name}
-        </Typography>
-        <Typography>{`R$ ${task.value}`}</Typography>
-        {task.image && <img src={task.image} alt="Task" style={styles.taskImage} />}
-      </div>
-      <Button onClick={() => deleteTask(index, task.id)}>
-        x
-      </Button>
-    </ListItem>
-  );
+  const getListIdAndFetchItems = async () => {
+    try {
+      const listId = await fetchListIdByName(category);
+
+      if (!listId) {
+        console.error('Lista não encontrada');
+        return;
+      }
+
+      localStorage.setItem('ListId', listId);
+      const items = await fetchItemsByListId(listId);
+      setTasks(items);
+    } catch (error) {
+      console.error('Erro ao obter lista e itens:', error);
+    }
+  };
+
+  useEffect(() => {
+    getListIdAndFetchItems();
+  }, [category]);
 
   const addTaskAndSave = async () => {
     try {
-      const listId = await fetchListIdByName(category);
+      const listId = localStorage.getItem('ListId');
+
       if (!listId) {
-        console.error('Lista não encontrada 2');
+        console.error('Lista não encontrada');
         return;
       }
 
@@ -58,26 +77,19 @@ const TodoListScreen = () => {
       setItemValue('');
       setImage(null);
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao adicionar item:', error);
     }
   };
 
-  const deleteTask = async (index, itemId) => {
-    const listId = await fetchListIdByName(category);
-    await deleteItemById(listId, itemId);
-    const updatedTasks = tasks.filter((_, i) => i !== index);
-    setTasks(updatedTasks);
-  };
-
-  const toggleTask = async (index, itemId, isChecked) => {
-    const check = !isChecked;
-    await updateItemById(itemId, check);
-
-    const updatedTasks = tasks.map((t, i) =>
-      i === index ? { ...t, is_checked: check } : t
-    );
-
-    setTasks(updatedTasks);
+  const deleteTask = async (itemId) => {
+    try {
+      const listId = localStorage.getItem('ListId');
+      await deleteItemById(listId, itemId);
+      const updatedTasks = tasks.filter((t) => t.id !== itemId);
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error('Erro ao excluir item:', error);
+    }
   };
 
   const handleImagePick = (event) => {
@@ -86,76 +98,77 @@ const TodoListScreen = () => {
 
     reader.onload = (e) => {
       const base64Image = e.target.result;
-      console.log(base64Image, 'image')
       setImage(base64Image);
     };
 
     reader.readAsDataURL(file);
   };
-  
-  const inputRef = useRef(null)
+
+  const inputRef = useRef(null);
 
   const pickImage = () => {
-    inputRef.current.click()
+    inputRef.current.click();
   };
 
-  useEffect(() => {
-    const getListItems = async () => {
-      try {
-        const listId = await fetchListIdByName(category);
-        if (!listId) {
-          console.error('Lista não encontrada 1');
-          return;
-        }
-
-        const items = await fetchItemsByListId(listId);
-        setTasks(items);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getListItems();
-  }, [category]);
+  const renderTask = (task) => (
+    <ListItem key={task.id} divider style={styles.tasks}>
+      <div>
+        <Typography style={styles.taskName}>
+          {task.name}
+        </Typography>
+        <Typography
+          style={styles.taskValue}
+        > 
+          {`R$${task.value}`}
+        </Typography>
+        {task.image && <img src={task.image} alt="Task" style={styles.taskImage} />}
+      </div>
+      <Button onClick={() => deleteTask(task.id)}  variant="contained" startIcon={<DeleteIcon />} >
+        Excluir
+      </Button>
+    </ListItem>
+  );
 
   return (
     <div style={styles.container}>
       <Typography variant="h2" style={styles.title}>
         {category}
       </Typography>
-      <Input
-        placeholder="Item"
+      <TextField
+        label="Item"
+        variant="outlined"
         value={task}
         onChange={(e) => setTask(e.target.value)}
         style={styles.inputContainer}
       />
-      <Input
-        placeholder="Valor do Item (Apenas número)"
+      <TextField
+        label="Valor do Item (Apenas número)"
+        variant="outlined"
         value={itemValue}
         onChange={(e) => setItemValue(e.target.value)}
         style={styles.inputContainer}
       />
-      <Button onClick={pickImage} style={styles.button}>
-        Escolher Imagem
-      </Button>
-      <div>
-        <input 
-          type='file'
-          ref={inputRef}
-          onChange={handleImagePick}
-          style={{display: 'none'}}
-        />
-      </div>
       {image && <img src={image} alt="Selected" style={styles.selectedImage} />}
+      <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+        Escolha sua imagem
+        <VisuallyHiddenInput onClick={pickImage} />
+      </Button>
+      <input 
+        type='file'
+        ref={inputRef}
+        onChange={handleImagePick}
+        style={{display: 'none'}}
+      />
       <Button
         disabled={!Boolean(task && itemValue)}
+        variant="contained"
         onClick={addTaskAndSave}
         style={styles.button}
       >
         Adicionar
       </Button>
       <div style={styles.listContainer}>
-        {tasks.map((task, index) => renderTask(task, index))}
+        {tasks.map((task) => renderTask(task))}
       </div>
     </div>
   );
@@ -164,37 +177,48 @@ const TodoListScreen = () => {
 const styles = {
   container: {
     flex: 1,
-    padding: 20,
+    padding: 40,
   },
   title: {
     marginBottom: 20,
-    marginLeft: 10,
   },
   inputContainer: {
-    marginBottom: 20,
+    display: 'flex',
+    marginBottom: 10,
     padding: 0,
   },
   button: {
     marginBottom: 20,
     marginLeft: 10,
     marginRight: 10,
+    marginTop: 20
   },
   listContainer: {
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 20,
+    marginTop: 30
   },
-  completedTask: {
-    textDecorationLine: 'line-through',
+  tasks: {
+    display: 'flex',
+    gap: 30
+  },
+  taskName: {
+    fontSize: 20,
+  },
+  taskValue: {
+    fontSize: 12
   },
   taskImage: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
-  },
-  selectedImage: {
     width: 100,
     height: 100,
-    margin: 10,
-    marginLeft: 0,
+    marginTop: 10,
+  },
+  selectedImage: {
+    width: 150,
+    height: 150,
+    display: 'block'
   },
 };
 

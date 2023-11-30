@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-
 import { useNavigate } from 'react-router-dom';
-
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CustomInputDialogModal from './CustomInputDialogModal';
-
 import { fetchListas, adicionarLista, removerLista } from '../actions/listActions';
 
 const CategoryScreen = () => {
@@ -43,9 +40,9 @@ const CategoryScreen = () => {
       setLoading(true);
       const novaLista = await adicionarLista(nome);
       setListas([...listas, novaLista]);
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -55,9 +52,9 @@ const CategoryScreen = () => {
       setLoading(true);
       await removerLista(id);
       setListas(listas.filter((lista) => lista.id !== id));
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -78,7 +75,6 @@ const CategoryScreen = () => {
                 <div style={styles.listItem} key={lista.id}>
                   <Button
                     variant="contained"
-                    color="primary"
                     onClick={() => handleListaClick(lista.name)}
                     style={styles.buttonContainer}
                   >
@@ -86,12 +82,7 @@ const CategoryScreen = () => {
                   </Button>
                   <Button
                     variant="contained"
-                    color="secondary"
-                    style={{
-                      width: '25%',
-                      height: 70,
-                      opacity: 0.7,
-                    }}
+                    style={styles.buttonRemove}
                     onClick={() => handleRemoverLista(lista.id)}
                   >
                     x
@@ -106,14 +97,16 @@ const CategoryScreen = () => {
           </>
         )}
       </div>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={handleAdicionarLista}
-        style={styles.buttonAdd}
-      >
-        Adicionar área
-      </Button>
+
+      <div style={styles.buttonAddContainer}>
+        <Button
+          variant="outlined"
+          onClick={handleAdicionarLista}
+          style={styles.buttonAdd}
+        >
+          Adicionar área
+        </Button>
+      </div>
       <CustomInputDialogModal
         visible={dialogVisible}
         onClose={handleDialogClose}
@@ -126,27 +119,41 @@ const CategoryScreen = () => {
 const styles = {
   container: {
     flex: 1,
-    padding: 10,
+    padding: 40,
+    position: 'relative',
   },
   middleContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    position: 'relative',
   },
   buttonContainer: {
-    marginRight: '0.5%',
-    marginBottom: 20,
     width: '100%',
   },
+  buttonRemove: {
+    width: '25%',
+    height: 70,
+    opacity: 0.7,
+    marginLeft: 10
+  },
   buttonAdd: {
-    width: '100%',
-    marginTop: 10,
+    minWidth: '95%',
+    bottom: 10,
+    position: 'fixed',
+    height: 80,
+  },
+  buttonAddContainer : {
+    display: 'flex',
+    justifyContent: 'center',
   },
   listItem: {
     display: 'flex',
     flexDirection: 'row',
     alignSelf: 'flex-start',
-    width: '80%',
     marginBottom: 10,
   },
   noListText: {
