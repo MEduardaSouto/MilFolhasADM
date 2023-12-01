@@ -132,8 +132,6 @@ const styles = {
     marginBottom: 20,
     width: 400,
     fontSize: 18,
-    // backgroundColor: '#D9A404', 
-    // color: '#401E01',
   },
   error: {
     color: 'red',

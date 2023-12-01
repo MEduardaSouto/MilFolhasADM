@@ -6,6 +6,7 @@ import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon  from '@mui/icons-material/Delete';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { styled } from '@mui/material/styles';
 
@@ -34,9 +35,12 @@ const TodoListScreen = () => {
   const [task, setTask] = useState('');
   const [itemValue, setItemValue] = useState('');
   const [image, setImage] = useState(null);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(false);
 
   const getListIdAndFetchItems = async () => {
     try {
+      setLoadingPage(true)
       const listId = await fetchListIdByName(category);
 
       if (!listId) {
@@ -49,6 +53,8 @@ const TodoListScreen = () => {
       setTasks(items);
     } catch (error) {
       console.error('Erro ao obter lista e itens:', error);
+    } finally {
+      setLoadingPage(false)
     }
   };
 
@@ -58,6 +64,7 @@ const TodoListScreen = () => {
 
   const addTaskAndSave = async () => {
     try {
+      setLoadingButton(true);
       const listId = localStorage.getItem('ListId');
 
       if (!listId) {
@@ -71,24 +78,29 @@ const TodoListScreen = () => {
         image: image,
       };
 
-      await addNewItem(listId, newItem);
-      setTasks([...tasks, newItem]);
+      const data = await addNewItem(listId, newItem);
+      setTasks([...tasks, data]);
       setTask('');
       setItemValue('');
       setImage(null);
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
+    } finally {
+      setLoadingButton(false);
     }
   };
 
   const deleteTask = async (itemId) => {
     try {
+      setLoadingPage(true);
       const listId = localStorage.getItem('ListId');
       await deleteItemById(listId, itemId);
       const updatedTasks = tasks.filter((t) => t.id !== itemId);
       setTasks(updatedTasks);
     } catch (error) {
       console.error('Erro ao excluir item:', error);
+    } finally {
+      setLoadingPage(false)
     }
   };
 
@@ -165,10 +177,11 @@ const TodoListScreen = () => {
         onClick={addTaskAndSave}
         style={styles.button}
       >
-        Adicionar
+        {loadingButton ? <CircularProgress size={24} color="inherit"/> : 'Adicionar'}
       </Button>
       <div style={styles.listContainer}>
-        {tasks.map((task) => renderTask(task))}
+        {loadingPage ? <CircularProgress size={50} style={styles.loadingPage}/> :
+        tasks.map((task) => renderTask(task))}
       </div>
     </div>
   );
@@ -220,6 +233,10 @@ const styles = {
     height: 150,
     display: 'block'
   },
+  loadingPage: {
+    alignSelf: 'center',
+    marginTop: '10%'
+  }
 };
 
 export default TodoListScreen;

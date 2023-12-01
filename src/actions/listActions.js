@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const instance = axios.create({
   baseURL: 'https://milfolhasserver.onrender.com',
-  // baseURL: 'http://192.168.0.7:3000'
+  // baseURL: 'http://172.29.240.1:3000'
 });
 
 export const getUserId = () => localStorage.getItem('userId');

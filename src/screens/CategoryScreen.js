@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CustomInputDialogModal from './CustomInputDialogModal';
+import CircularProgress from '@mui/material/CircularProgress';
+
 import { fetchListas, adicionarLista, removerLista } from '../actions/listActions';
 
 const CategoryScreen = () => {
@@ -65,9 +68,11 @@ const CategoryScreen = () => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.middleContainer}>
+      <div>
         {loading ? (
-          <div>Loading...</div>
+          <div style={styles.loading}>
+            <CircularProgress size={50} />
+          </div>
         ) : (
           <>
             {listas.length > 0 ? (
@@ -90,7 +95,7 @@ const CategoryScreen = () => {
                 </div>
               ))
             ) : (
-              <div>
+              <div style={styles.loading}>
                 <Typography style={styles.noListText}>Nenhuma área encontrada.</Typography>
               </div>
             )}
@@ -122,10 +127,16 @@ const styles = {
     padding: 40,
     position: 'relative',
   },
+  loading: {
+    display: 'flex',
+    alignSelf: 'flex-start',
+    height: '50vh',
+    width: 'auto',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   middleContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: '100vh',
@@ -157,7 +168,7 @@ const styles = {
     marginBottom: 10,
   },
   noListText: {
-    marginBottom: 20,
+    fontSize: 20
   },
 };
 
