@@ -77,10 +77,10 @@ const LoginScreen = () => {
         }}
       />
       <Button
-        disabled={!Boolean(username && password) || loading} // Disable button when loading
+        disabled={!Boolean(username && password) || loading}
         onClick={handleLogin}
         variant="contained"
-        style={styles.button}
+        style={ Boolean(username && password) || loading ? styles.button : styles.buttonDisabled}
       >
         {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
       </Button>
@@ -117,7 +117,15 @@ const styles = {
     marginBottom: 20,
     width: 400,
     fontSize: 18,
-    color: '#401E01'
+    color: '#2a2419',
+    backgroundColor: '#eca400'
+  },
+  buttonDisabled: {
+    marginBottom: 20,
+    width: 400,
+    fontSize: 18,
+    color: '#2a2419',
+    backgroundColor: '#ccc'
   },
   error: {
     color: 'red',

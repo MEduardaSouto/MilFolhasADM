@@ -135,7 +135,7 @@ const TodoListScreen = () => {
         </Typography>
         {task.image && <img src={task.image} alt="Task" style={styles.taskImage} />}
       </div>
-      <Button onClick={() => deleteTask(task.id)}  variant="contained" startIcon={<DeleteIcon />} >
+      <Button style={{ color: '#2a2419', backgroundColor: '#eca400' }} onClick={() => deleteTask(task.id)}  variant="contained" startIcon={<DeleteIcon />} >
         Excluir
       </Button>
     </ListItem>
@@ -161,7 +161,7 @@ const TodoListScreen = () => {
         style={styles.inputContainer}
       />
       {image && <img src={image} alt="Selected" style={styles.selectedImage} />}
-      <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+      <Button style={{ color: '#2a2419', backgroundColor: '#eca400' }} component="label" variant="contained" startIcon={<CloudUploadIcon />}>
         Escolha sua imagem
         <VisuallyHiddenInput onClick={pickImage} />
       </Button>
@@ -175,7 +175,7 @@ const TodoListScreen = () => {
         disabled={!Boolean(task && itemValue)}
         variant="contained"
         onClick={addTaskAndSave}
-        style={styles.button}
+        style={Boolean(task && itemValue) ? styles.button : styles.buttonDisabled}
       >
         {loadingButton ? <CircularProgress size={24} color="inherit"/> : 'Adicionar'}
       </Button>
@@ -204,7 +204,17 @@ const styles = {
     marginBottom: 20,
     marginLeft: 10,
     marginRight: 10,
-    marginTop: 20
+    marginTop: 20,
+    color: '#2a2419',
+    backgroundColor: '#eca400'
+  },
+  buttonDisabled: {
+    marginBottom: 20,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 20,
+    color: '#2a2419',
+    backgroundColor: '#ccc'
   },
   listContainer: {
     flex: 1,

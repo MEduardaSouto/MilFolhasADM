@@ -144,18 +144,24 @@ const styles = {
   },
   buttonContainer: {
     width: '100%',
+    color: '#2a2419',
+    backgroundColor: '#eca400'
   },
   buttonRemove: {
     width: '25%',
     height: 70,
     opacity: 0.7,
-    marginLeft: 10
+    marginLeft: 10,
+    color: '#2a2419',
+    backgroundColor: '#eca400'
   },
   buttonAdd: {
     minWidth: '95%',
     bottom: 10,
     position: 'fixed',
     height: 80,
+    borderColor: '#eca400',
+    color: '#2a2419',
   },
   buttonAddContainer : {
     display: 'flex',

@@ -57,13 +57,11 @@ const styles = {
     marginBottom: 20,
     width: '100%',
   },
-  // viewButtons: {
-  //   // display: 'flex',
-  //   // justifyContent: 'space-between',
-  // },
   buttons: {
     width: '100%',
-    marginBottom: 10
+    marginBottom: 10,
+    color: '#2a2419',
+    backgroundColor: '#eca400'
   }
 };
 
